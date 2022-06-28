@@ -127,10 +127,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
-MEDIA_ROOT = '/vol/web/media'
-STATIC_ROOT = '/vol/web/static'
+# MEDIA_ROOT = '/vol/web/media'
+# STATIC_ROOT = '/vol/web/static'
 
 AUTH_USER_MODEL = 'core.User'
 
