@@ -58,3 +58,8 @@ class RecipeImageSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'image')
         read_only_fields = ('id',)
+        
+
+class RecipeParamsSerializer(serializers.Serializer):
+    tags = serializers.CharField(required = False, help_text='insert tags ids like this 1,2,3')
+    ingredients = serializers.CharField(required = False, help_text='insert ingredients ids like this 1,2,3')

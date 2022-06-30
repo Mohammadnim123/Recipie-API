@@ -4,9 +4,11 @@ from rest_framework import viewsets, mixins, status, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Tag, Ingredient, Recipe, recipe_image_file_path
+from core.models import Tag, Ingredient, Recipe
 
 from recipe import serializers
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -15,6 +17,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
     """Base viewset for user owned recipe attributes"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    assigned_only = openapi.Parameter('assigned_only', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description="it should be 1 or 0")
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
@@ -32,6 +35,12 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
     def perform_create(self, serializer):
         """Create a new object"""
         serializer.save(user=self.request.user)
+        
+    @swagger_auto_schema(manual_parameters=[assigned_only])
+    def list(self, request, *args, **kwargs):
+        """Return tags for the authenticated user"""
+        return super().list(request, *args, **kwargs)
+
 
 
 class TagViewSet(BaseRecipeAttrViewSet):
@@ -83,6 +92,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new recipe"""
         serializer.save(user=self.request.user)
+        
+    @swagger_auto_schema(query_serializer=serializers.RecipeParamsSerializer)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     @action(methods=['POST'], detail=True, url_path='upload-image')
     def upload_image(self, request, pk=None):
